@@ -11,6 +11,7 @@ if (count($_POST) > 0) {
     $description = $_POST["description"];
     $author = $_POST["author"];
     $pub_date = $_POST["pub_date"];
+    $status = $_POST["status"];
 
     $update = $conn->query("UPDATE media 
                             SET 
@@ -18,12 +19,16 @@ if (count($_POST) > 0) {
                             media.isbn = $isbn,
                             media.description = '$description',
                             media.author = '$author',
-                            media.pub_date = '$pub_date' WHERE media.media_id = $media_id"
+                            media.pub_date = '$pub_date',
+                            media.fk_status = '$status'
+                            WHERE media.media_id = $media_id"
                            );
-    echo "<div class='alert alert-success' role='alert'>
-             <h4 class='alert-heading'>You have successfully updated the entry</h4>
-            <hr>
-            <a class='btn btn-primary' href='index.php'>Back to Homepage</a>
+    echo "  <div class='container'>
+                <div class='alert alert-success' role='alert'>
+                    <h4 class='alert-heading'>You have successfully updated the entry</h4>
+                    <hr>
+                    <a class='btn btn-primary' href='index.php'>Back to Homepage</a>
+                </div>
             </div>"; 
 } else {
     $id = $_GET["id"];
@@ -34,8 +39,10 @@ if (count($_POST) > 0) {
                             media.isbn,
                             media.description,
                             media.author,
-                            media.pub_date
+                            media.pub_date,
+                            status.status
                             FROM media
+                            INNER JOIN status ON media.fk_status = status.status_id
                             WHERE media.media_id = $id"
                             );
     $row = $result->fetch_assoc();
@@ -45,6 +52,7 @@ if (count($_POST) > 0) {
     $description = $row["description"];
     $author = $row["author"];
     $pub_date = $row["pub_date"];
+    $status = $row["status"];
 }
 ?>
 
@@ -86,8 +94,19 @@ if (count($_POST) > 0) {
                     <textarea name="description" id="description" rows="10" style="width:100%"><?= $description ?></textarea>
                 </div>
             </div>
+            <div class="row m-1">
+                <label for="cars">Status:</label>
+
+                <select name="status" id="status">
+                    <option value="">----</option>
+                    <option value="1">Available</option>
+                    <option value="2">Not Available</option>
+                </select>
+            </div>
             
             <button class="btn btn-primary mt-3 mb-5" type="submit" name="add" class="registerbtn" style="width:200px">Edit</button>
+            <a href='index.php' class="nav-link text-center m-1">Back to Homepage</a>
+
     </form>
     </div>
 
